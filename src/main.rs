@@ -6,6 +6,8 @@ const MAP_WIDTH: usize = 24;
 const MAP_HEIGHT: usize = 24;
 const SCREEN_WIDTH: u32 = 640;
 const SCREEN_HEIGHT: u32 = 480;
+const TEXTURE_WIDTH: usize = 64;
+const TEXTURE_HEIGHT: usize = 64;
 
 #[rustfmt::skip]
 const WORLD_MAP: [[i32; MAP_WIDTH]; MAP_HEIGHT] = [
@@ -57,6 +59,35 @@ fn main() -> Result<(), String> {
         .create_texture_streaming(PixelFormatEnum::RGB24, SCREEN_WIDTH, SCREEN_HEIGHT)
         .map_err(|e| format!("{:?}", e))?;
     let mut texture_buffer;
+
+    let mut textures = vec![vec![[0; 3]; TEXTURE_WIDTH * TEXTURE_HEIGHT]; 8];
+    for x in 0..TEXTURE_WIDTH {
+        for y in 0..TEXTURE_HEIGHT {
+            let xor_color = (x * 0x100 / TEXTURE_WIDTH) as u8 ^ (y * 0x100 / TEXTURE_HEIGHT) as u8;
+            let y_color = (y * 0x100 / TEXTURE_HEIGHT) as u8;
+            let xy_color = (y * 0x80 / TEXTURE_HEIGHT) as u8 + (x * 0x80 / TEXTURE_WIDTH) as u8;
+            textures[0][TEXTURE_WIDTH * y + x].clone_from_slice(&[
+                0xFE * (if x != y && x != TEXTURE_WIDTH - y {
+                    1
+                } else {
+                    0
+                }),
+                0x00,
+                0x00,
+            ]);
+            textures[1][TEXTURE_WIDTH * y + x].clone_from_slice(&[xy_color, xy_color, xy_color]);
+            textures[2][TEXTURE_WIDTH * y + x].clone_from_slice(&[xy_color, xy_color, 0x00]);
+            textures[3][TEXTURE_WIDTH * y + x].clone_from_slice(&[xor_color, xor_color, xor_color]);
+            textures[4][TEXTURE_WIDTH * y + x].clone_from_slice(&[0x00, xor_color, 0x00]);
+            textures[5][TEXTURE_WIDTH * y + x].clone_from_slice(&[
+                0xC0 * (if x % 16 != 0 && y % 16 != 0 { 1 } else { 0 }),
+                0x00,
+                0x00,
+            ]);
+            textures[6][TEXTURE_WIDTH * y + x].clone_from_slice(&[y_color, 0x00, 0x00]);
+            textures[7][TEXTURE_WIDTH * y + x].clone_from_slice(&[0x80, 0x80, 0x80]);
+        }
+    }
 
     let mut pos_x = 22.0;
     let mut pos_y = 12.0;
@@ -146,27 +177,41 @@ fn main() -> Result<(), String> {
                 draw_end = SCREEN_HEIGHT as i32 - 1;
             }
 
-            let mut color = match WORLD_MAP[map_x][map_y] {
-                1 => [0xFF, 0, 0],
-                2 => [0, 0xFF, 0],
-                3 => [0, 0, 0xFF],
-                4 => [0xFF, 0xFF, 0xFF],
-                _ => [0xFF, 0xFF, 0],
-            };
+            let tex_num = (WORLD_MAP[map_x][map_y] - 1) as usize;
 
-            if side == 1 {
-                for i in color.iter_mut() {
-                    *i /= 2;
-                }
+            let mut wall_x = if side == 0 {
+                pos_y + perp_wall_dist * ray_dir_y
+            } else {
+                pos_x + perp_wall_dist * ray_dir_x
+            };
+            wall_x -= wall_x.floor();
+
+            let mut tex_x = (wall_x * TEXTURE_WIDTH as f64) as usize;
+            if side == 0 && ray_dir_x > 0.0 {
+                tex_x = TEXTURE_WIDTH as usize - tex_x - 1;
+            }
+            if side == 1 && ray_dir_y < 0.0 {
+                tex_x = TEXTURE_WIDTH as usize - tex_x - 1;
             }
 
-            vert_line(
-                x as usize,
-                draw_start as usize,
-                draw_end as usize,
-                &mut texture_buffer,
-                color,
-            );
+            let step = 1.0 * TEXTURE_HEIGHT as f64 / line_height as f64;
+            let mut tex_pos =
+                (draw_start - SCREEN_HEIGHT as i32 / 2 + line_height / 2) as f64 * step;
+            for y in draw_start..draw_end {
+                let tex_y = tex_pos as usize & (TEXTURE_HEIGHT as usize - 1);
+                tex_pos += step;
+                let mut color = textures[tex_num][TEXTURE_HEIGHT as usize * tex_y + tex_x];
+                if side == 1 {
+                    for component in color.iter_mut() {
+                        *component /= 2;
+                    }
+                }
+
+                for (i, component) in color.iter().enumerate() {
+                    texture_buffer[(x as usize + y as usize * SCREEN_WIDTH as usize) * 3 + i] =
+                        *component;
+                }
+            }
         }
         old_time = time;
         time = timer_subsystem.ticks() as f64;
@@ -236,18 +281,4 @@ fn main() -> Result<(), String> {
     }
 
     Ok(())
-}
-
-fn vert_line(
-    x: usize,
-    line_start: usize,
-    line_end: usize,
-    texture_buffer: &mut [u8],
-    color: [u8; 3],
-) {
-    for i in line_start..line_end {
-        for (j, component) in color.iter().enumerate() {
-            texture_buffer[(x + i * SCREEN_WIDTH as usize) * 3 + j] = *component;
-        }
-    }
 }
