@@ -11,30 +11,30 @@ const TEXTURE_HEIGHT: usize = 64;
 
 #[rustfmt::skip]
 const WORLD_MAP: [[i32; MAP_WIDTH]; MAP_HEIGHT] = [
-    [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-    [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-    [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-    [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-    [1, 0, 0, 0, 0, 0, 2, 2, 2, 2, 2, 0, 0, 0, 0, 3, 0, 3, 0, 3, 0, 0, 0, 1],
-    [1, 0, 0, 0, 0, 0, 2, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-    [1, 0, 0, 0, 0, 0, 2, 0, 0, 0, 2, 0, 0, 0, 0, 3, 0, 0, 0, 3, 0, 0, 0, 1],
-    [1, 0, 0, 0, 0, 0, 2, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-    [1, 0, 0, 0, 0, 0, 2, 2, 0, 2, 2, 0, 0, 0, 0, 3, 0, 3, 0, 3, 0, 0, 0, 1],
-    [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-    [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-    [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-    [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-    [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-    [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-    [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-    [1, 4, 4, 4, 4, 4, 4, 4, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-    [1, 4, 0, 4, 0, 0, 0, 0, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-    [1, 4, 0, 0, 0, 0, 5, 0, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-    [1, 4, 0, 4, 0, 0, 0, 0, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-    [1, 4, 0, 4, 4, 4, 4, 4, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-    [1, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-    [1, 4, 4, 4, 4, 4, 4, 4, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-    [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+  [4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,7,7,7,7,7,7,7,7],
+  [4,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,7,0,0,0,0,0,0,7],
+  [4,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,7],
+  [4,0,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,7],
+  [4,0,3,0,0,0,0,0,0,0,0,0,0,0,0,0,7,0,0,0,0,0,0,7],
+  [4,0,4,0,0,0,0,5,5,5,5,5,5,5,5,5,7,7,0,7,7,7,7,7],
+  [4,0,5,0,0,0,0,5,0,5,0,5,0,5,0,5,7,0,0,0,7,7,7,1],
+  [4,0,6,0,0,0,0,5,0,0,0,0,0,0,0,5,7,0,0,0,0,0,0,8],
+  [4,0,7,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,7,7,7,1],
+  [4,0,8,0,0,0,0,5,0,0,0,0,0,0,0,5,7,0,0,0,0,0,0,8],
+  [4,0,0,0,0,0,0,5,0,0,0,0,0,0,0,5,7,0,0,0,7,7,7,1],
+  [4,0,0,0,0,0,0,5,5,5,5,0,5,5,5,5,7,7,7,7,7,7,7,1],
+  [6,6,6,6,6,6,6,6,6,6,6,0,6,6,6,6,6,6,6,6,6,6,6,6],
+  [8,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,4],
+  [6,6,6,6,6,6,0,6,6,6,6,0,6,6,6,6,6,6,6,6,6,6,6,6],
+  [4,4,4,4,4,4,0,4,4,4,6,0,6,2,2,2,2,2,2,2,3,3,3,3],
+  [4,0,0,0,0,0,0,0,0,4,6,0,6,2,0,0,0,0,0,2,0,0,0,2],
+  [4,0,0,0,0,0,0,0,0,0,0,0,6,2,0,0,5,0,0,2,0,0,0,2],
+  [4,0,0,0,0,0,0,0,0,4,6,0,6,2,0,0,0,0,0,2,2,0,2,2],
+  [4,0,6,0,6,0,0,0,0,4,6,0,0,0,0,0,5,0,0,0,0,0,0,2],
+  [4,0,0,5,0,0,0,0,0,4,6,0,6,2,0,0,0,0,0,2,2,0,2,2],
+  [4,0,6,0,6,0,0,0,0,4,6,0,6,2,0,0,5,0,0,2,0,0,0,2],
+  [4,0,0,0,0,0,0,0,0,4,6,0,6,2,0,0,0,0,0,2,0,0,0,2],
+  [4,4,4,4,4,4,4,4,4,4,1,1,1,2,2,2,2,2,2,3,3,3,3,3]
 ];
 
 fn main() -> Result<(), String> {
@@ -58,47 +58,43 @@ fn main() -> Result<(), String> {
     let mut texture = texture_creator
         .create_texture_streaming(PixelFormatEnum::RGB24, SCREEN_WIDTH, SCREEN_HEIGHT)
         .map_err(|e| format!("{:?}", e))?;
-    let mut texture_buffer;
 
-    let mut textures = vec![vec![[0; 3]; TEXTURE_WIDTH * TEXTURE_HEIGHT]; 8];
-    for x in 0..TEXTURE_WIDTH {
-        for y in 0..TEXTURE_HEIGHT {
-            let xor_color = (x * 0x100 / TEXTURE_WIDTH) as u8 ^ (y * 0x100 / TEXTURE_HEIGHT) as u8;
-            let y_color = (y * 0x100 / TEXTURE_HEIGHT) as u8;
-            let xy_color = (y * 0x80 / TEXTURE_HEIGHT) as u8 + (x * 0x80 / TEXTURE_WIDTH) as u8;
-            textures[0][TEXTURE_WIDTH * y + x].clone_from_slice(&[
-                0xFE * (if x != y && x != TEXTURE_WIDTH - y {
-                    1
-                } else {
-                    0
-                }),
-                0x00,
-                0x00,
-            ]);
-            textures[1][TEXTURE_WIDTH * y + x].clone_from_slice(&[xy_color, xy_color, xy_color]);
-            textures[2][TEXTURE_WIDTH * y + x].clone_from_slice(&[xy_color, xy_color, 0x00]);
-            textures[3][TEXTURE_WIDTH * y + x].clone_from_slice(&[xor_color, xor_color, xor_color]);
-            textures[4][TEXTURE_WIDTH * y + x].clone_from_slice(&[0x00, xor_color, 0x00]);
-            textures[5][TEXTURE_WIDTH * y + x].clone_from_slice(&[
-                0xC0 * (if x % 16 != 0 && y % 16 != 0 { 1 } else { 0 }),
-                0x00,
-                0x00,
-            ]);
-            textures[6][TEXTURE_WIDTH * y + x].clone_from_slice(&[y_color, 0x00, 0x00]);
-            textures[7][TEXTURE_WIDTH * y + x].clone_from_slice(&[0x80, 0x80, 0x80]);
-        }
-    }
+    let eagle_texture_buf = include_bytes!("textures/eagle.png");
+    let redbrick_texture_buf = include_bytes!("textures/redbrick.png");
+    let purple_stone_texture_buf = include_bytes!("textures/purplestone.png");
+    let grey_stone_texture_buf = include_bytes!("textures/greystone.png");
+    let blue_stone_texture_buf = include_bytes!("textures/bluestone.png");
+    let mossy_texture_buf = include_bytes!("textures/mossy.png");
+    let wood_texture_buf = include_bytes!("textures/wood.png");
+    let color_stone_texture_buf = include_bytes!("textures/colorstone.png");
 
+    let eagle_texture = load_png(eagle_texture_buf.as_ref())?;
+    let redbrick_texture = load_png(redbrick_texture_buf.as_ref())?;
+    let purple_stone_texture = load_png(purple_stone_texture_buf.as_ref())?;
+    let grey_stone_texture = load_png(grey_stone_texture_buf.as_ref())?;
+    let blue_stone_texture = load_png(blue_stone_texture_buf.as_ref())?;
+    let mossy_texture = load_png(mossy_texture_buf.as_ref())?;
+    let wood_texture = load_png(wood_texture_buf.as_ref())?;
+    let color_stone_texture = load_png(color_stone_texture_buf.as_ref())?;
+
+    let mut textures = vec![vec![0; TEXTURE_WIDTH * TEXTURE_HEIGHT * 3]; 8];
+    textures[0].clone_from_slice(&eagle_texture);
+    textures[1].clone_from_slice(&redbrick_texture);
+    textures[2].clone_from_slice(&purple_stone_texture);
+    textures[3].clone_from_slice(&grey_stone_texture);
+    textures[4].clone_from_slice(&blue_stone_texture);
+    textures[5].clone_from_slice(&mossy_texture);
+    textures[6].clone_from_slice(&wood_texture);
+    textures[7].clone_from_slice(&color_stone_texture);
     let mut pos_x = 22.0;
-    let mut pos_y = 12.0;
+    let mut pos_y = 11.5;
     let mut dir_x = -1.0;
     let mut dir_y = 0.0;
     let mut plane_x = 0.0;
     let mut plane_y = 0.66;
-
     let mut time = 0.0;
     let mut old_time;
-
+    let mut texture_buffer;
     let mut done = false;
     let mut event_pump = sdl_context.event_pump()?;
     while !done {
@@ -200,16 +196,16 @@ fn main() -> Result<(), String> {
             for y in draw_start..draw_end {
                 let tex_y = tex_pos as usize & (TEXTURE_HEIGHT as usize - 1);
                 tex_pos += step;
-                let mut color = textures[tex_num][TEXTURE_HEIGHT as usize * tex_y + tex_x];
-                if side == 1 {
-                    for component in color.iter_mut() {
-                        *component /= 2;
-                    }
-                }
 
-                for (i, component) in color.iter().enumerate() {
+                for i in 0..3 {
+                    let mut color =
+                        textures[tex_num][(TEXTURE_HEIGHT as usize * tex_y + tex_x) * 3 + i];
+                    if side == 1 {
+                        color /= 2;
+                    }
+
                     texture_buffer[(x as usize + y as usize * SCREEN_WIDTH as usize) * 3 + i] =
-                        *component;
+                        color;
                 }
             }
         }
@@ -281,4 +277,15 @@ fn main() -> Result<(), String> {
     }
 
     Ok(())
+}
+
+fn load_png(texture: impl std::io::Read) -> Result<Vec<u8>, String> {
+    let decoder = png::Decoder::new(texture);
+    let (info, mut reader) = decoder.read_info().map_err(|e| format!("{:?}", e))?;
+    let mut buf = vec![0; info.buffer_size()];
+    reader
+        .next_frame(&mut buf)
+        .map_err(|e| format!("{:?}", e))?;
+
+    Ok(buf)
 }
