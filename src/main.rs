@@ -1,6 +1,7 @@
 use sdl2::event::Event;
 use sdl2::keyboard::Keycode;
 use sdl2::pixels::PixelFormatEnum;
+use std::collections::HashSet;
 
 const MAP_WIDTH: usize = 24;
 const MAP_HEIGHT: usize = 24;
@@ -58,6 +59,8 @@ fn main() -> Result<(), String> {
     let mut texture = texture_creator
         .create_texture_streaming(PixelFormatEnum::RGB24, SCREEN_WIDTH, SCREEN_HEIGHT)
         .map_err(|e| format!("{:?}", e))?;
+
+    let mut pressed_keys = HashSet::new();
 
     let eagle_texture_buf = include_bytes!("textures/eagle.png");
     let redbrick_texture_buf = include_bytes!("textures/redbrick.png");
@@ -123,8 +126,10 @@ fn main() -> Result<(), String> {
                 let cell_x = floor_x as usize;
                 let cell_y = floor_y as usize;
 
-                let tx = (TEXTURE_WIDTH as f64 * (floor_x - cell_x as f64)) as usize & (TEXTURE_WIDTH - 1);
-                let ty = (TEXTURE_HEIGHT as f64 * (floor_y - cell_y as f64)) as usize & (TEXTURE_HEIGHT - 1);
+                let tx = (TEXTURE_WIDTH as f64 * (floor_x - cell_x as f64)) as usize
+                    & (TEXTURE_WIDTH - 1);
+                let ty = (TEXTURE_HEIGHT as f64 * (floor_y - cell_y as f64)) as usize
+                    & (TEXTURE_HEIGHT - 1);
 
                 floor_x += floor_step_x;
                 floor_y += floor_step_y;
@@ -135,13 +140,16 @@ fn main() -> Result<(), String> {
                 for i in 0..3 {
                     let mut color = textures[floor_texture][(TEXTURE_WIDTH * ty + tx) * 3 + i];
                     color /= 2;
-                    texture_buffer[(x as usize + y as usize * SCREEN_WIDTH as usize) * 3 + i] = color;
+                    texture_buffer[(x as usize + y as usize * SCREEN_WIDTH as usize) * 3 + i] =
+                        color;
 
                     color = textures[ceiling_texture][(TEXTURE_WIDTH * ty + tx) * 3 + i];
                     color /= 2;
-                    texture_buffer[(x as usize + (SCREEN_HEIGHT - 1 - y) as usize * SCREEN_WIDTH as usize) * 3 + i] = color;
+                    texture_buffer[(x as usize
+                        + (SCREEN_HEIGHT - 1 - y) as usize * SCREEN_WIDTH as usize)
+                        * 3
+                        + i] = color;
                 }
-
             }
         }
 
@@ -270,55 +278,59 @@ fn main() -> Result<(), String> {
             match event {
                 Event::Quit { .. } => done = true,
                 Event::KeyDown {
-                    keycode: Some(Keycode::Escape),
-                    ..
-                } => done = true,
-                Event::KeyDown {
-                    keycode: Some(Keycode::Up),
+                    keycode: Some(keycode),
                     ..
                 } => {
-                    if WORLD_MAP[(pos_x + dir_x * move_speed) as usize][pos_y as usize] == 0 {
-                        pos_x += dir_x * move_speed;
-                    }
-                    if WORLD_MAP[pos_x as usize][(pos_y + dir_y * move_speed) as usize] == 0 {
-                        pos_y += dir_y * move_speed;
-                    }
+                    let _ = pressed_keys.insert(keycode);
                 }
-                Event::KeyDown {
-                    keycode: Some(Keycode::Down),
+                Event::KeyUp {
+                    keycode: Some(keycode),
                     ..
                 } => {
-                    if WORLD_MAP[(pos_x - dir_x * move_speed) as usize][pos_y as usize] == 0 {
-                        pos_x -= dir_x * move_speed;
-                    }
-                    if WORLD_MAP[pos_x as usize][(pos_y - dir_y * move_speed) as usize] == 0 {
-                        pos_y -= dir_y * move_speed;
-                    }
-                }
-                Event::KeyDown {
-                    keycode: Some(Keycode::Right),
-                    ..
-                } => {
-                    let old_dir_x = dir_x;
-                    dir_x = dir_x * (-rot_speed).cos() - dir_y * (-rot_speed).sin();
-                    dir_y = old_dir_x * (-rot_speed).sin() + dir_y * (-rot_speed).cos();
-                    let old_plane_x = plane_x;
-                    plane_x = plane_x * (-rot_speed).cos() - plane_y * (-rot_speed).sin();
-                    plane_y = old_plane_x * (-rot_speed).sin() + plane_y * (-rot_speed).cos();
-                }
-                Event::KeyDown {
-                    keycode: Some(Keycode::Left),
-                    ..
-                } => {
-                    let old_dir_x = dir_x;
-                    dir_x = dir_x * rot_speed.cos() - dir_y * rot_speed.sin();
-                    dir_y = old_dir_x * rot_speed.sin() + dir_y * rot_speed.cos();
-                    let old_plane_x = plane_x;
-                    plane_x = plane_x * rot_speed.cos() - plane_y * rot_speed.sin();
-                    plane_y = old_plane_x * rot_speed.sin() + plane_y * rot_speed.cos();
+                    let _ = pressed_keys.remove(&keycode);
                 }
                 _ => (),
             }
+        }
+
+        if pressed_keys.contains(&Keycode::Escape) {
+            done = true;
+        }
+
+        if pressed_keys.contains(&Keycode::Up) {
+            if WORLD_MAP[(pos_x + dir_x * move_speed) as usize][pos_y as usize] == 0 {
+                pos_x += dir_x * move_speed;
+            }
+            if WORLD_MAP[pos_x as usize][(pos_y + dir_y * move_speed) as usize] == 0 {
+                pos_y += dir_y * move_speed;
+            }
+        }
+
+        if pressed_keys.contains(&Keycode::Down) {
+            if WORLD_MAP[(pos_x - dir_x * move_speed) as usize][pos_y as usize] == 0 {
+                pos_x -= dir_x * move_speed;
+            }
+            if WORLD_MAP[pos_x as usize][(pos_y - dir_y * move_speed) as usize] == 0 {
+                pos_y -= dir_y * move_speed;
+            }
+        }
+
+        if pressed_keys.contains(&Keycode::Right) {
+            let old_dir_x = dir_x;
+            dir_x = dir_x * (-rot_speed).cos() - dir_y * (-rot_speed).sin();
+            dir_y = old_dir_x * (-rot_speed).sin() + dir_y * (-rot_speed).cos();
+            let old_plane_x = plane_x;
+            plane_x = plane_x * (-rot_speed).cos() - plane_y * (-rot_speed).sin();
+            plane_y = old_plane_x * (-rot_speed).sin() + plane_y * (-rot_speed).cos();
+        }
+
+        if pressed_keys.contains(&Keycode::Left) {
+            let old_dir_x = dir_x;
+            dir_x = dir_x * rot_speed.cos() - dir_y * rot_speed.sin();
+            dir_y = old_dir_x * rot_speed.sin() + dir_y * rot_speed.cos();
+            let old_plane_x = plane_x;
+            plane_x = plane_x * rot_speed.cos() - plane_y * rot_speed.sin();
+            plane_y = old_plane_x * rot_speed.sin() + plane_y * rot_speed.cos();
         }
         timer_subsystem.delay(5);
     }
